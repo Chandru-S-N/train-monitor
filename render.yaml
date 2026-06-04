@@ -3,7 +3,6 @@ services:
   - type: web
     name: train-monitor-backend
     env: python
-    plan: free
     buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
     startCommand: "daphne -b 0.0.0.0 -p $PORT config.asgi:application"
     rootDir: backend
@@ -18,5 +17,7 @@ services:
         sync: false
       - key: IN_PROCESS_SIMULATOR
         value: "true"
+      - key: PYTHON_VERSION
+        value: "3.11.9"
       - key: SECRET_KEY
         generateValue: true
