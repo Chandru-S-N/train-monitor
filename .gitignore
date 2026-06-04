@@ -1,0 +1,41 @@
+# Dependency directories
+node_modules/
+backend/venv/
+backend/.venv/
+venv/
+.venv/
+env/
+
+# Environment files
+.env
+.env*.local
+
+# SQLite Database
+*.sqlite3
+db.sqlite3
+
+# Production build outputs
+dist/
+build/
+out/
+staticfiles/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editor / OS settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+desktop.ini
