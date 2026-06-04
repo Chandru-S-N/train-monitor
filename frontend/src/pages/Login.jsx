@@ -71,7 +71,7 @@ export default function Login() {
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  placeholder="admin@trainmonitor.com"
+                  placeholder="Enter your email"
                   className="form-input"
                   style={{ paddingLeft: 40 }}
                   id="login-email"

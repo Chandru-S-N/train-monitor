@@ -143,8 +143,8 @@ export default function Navbar({ onMenuClick }) {
                 fontSize: 14,
               }}>{roleEmoji}</span>
 
-              <div style={{ textAlign: 'left' }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.2 }}>
+              <div className="hidden sm:block" style={{ textAlign: 'left' }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.2, maxWidth: 90, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {user.username || user.email?.split('@')[0]}
                 </div>
                 <div style={{ fontSize: 10, color: roleStyle.color, fontWeight: 600 }}>
