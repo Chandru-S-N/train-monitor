@@ -99,11 +99,11 @@ export default function Dashboard() {
                   <th>Train</th>
                   <th>Temp (°C)</th>
                   <th>Pressure</th>
-                  <th>Humidity</th>
-                  <th>Vibration</th>
-                  <th>Speed</th>
+                  <th className="hidden sm:table-cell">Humidity</th>
+                  <th className="hidden md:table-cell">Vibration</th>
+                  <th className="hidden md:table-cell">Speed</th>
                   <th>Status</th>
-                  <th>Time</th>
+                  <th className="hidden sm:table-cell">Time</th>
                 </tr>
               </thead>
               <tbody>
@@ -121,11 +121,11 @@ export default function Dashboard() {
                         </span>
                       </td>
                       <td>{round2(r.pressure ?? 0)}</td>
-                      <td>{round2(r.humidity ?? 0)}%</td>
-                      <td>{round2(r.vibration ?? 0)}</td>
-                      <td>{round2(r.speed ?? 0)} km/h</td>
+                      <td className="hidden sm:table-cell">{round2(r.humidity ?? 0)}%</td>
+                      <td className="hidden md:table-cell">{round2(r.vibration ?? 0)}</td>
+                      <td className="hidden md:table-cell">{round2(r.speed ?? 0)} km/h</td>
                       <td><SeverityBadge severity={r.status || 'normal'} size="xs" /></td>
-                      <td style={{ color: 'var(--text-secondary)', fontSize: 11 }}>{r.timestamp ? fmtDate(r.timestamp) : '—'}</td>
+                      <td className="hidden sm:table-cell" style={{ color: 'var(--text-secondary)', fontSize: 11 }}>{r.timestamp ? fmtDate(r.timestamp) : '—'}</td>
                     </tr>
                   ))
                 )}
