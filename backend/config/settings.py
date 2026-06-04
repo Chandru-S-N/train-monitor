@@ -195,6 +195,13 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://train-monitor-backend.onrender.com',
+    'https://train-monitor-web.vercel.app',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+]
+
 AUTH_USER_MODEL = 'users.User'
 
 AUTH_PASSWORD_VALIDATORS = [
