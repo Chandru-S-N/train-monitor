@@ -1,6 +1,6 @@
 import { useDataStore } from '../store/dataStore'
 import { useAuthStore } from '../store/authStore'
-import { Wifi, WifiOff, Bell, Clock, LogOut, ChevronDown } from 'lucide-react'
+import { Wifi, WifiOff, Bell, Clock, LogOut, ChevronDown, Menu } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 
@@ -23,7 +23,7 @@ const ROLE_STYLES = {
 
 const ROLE_EMOJI = { admin: '🛡️', operator: '🎛️', maintenance: '🔧' }
 
-export default function Navbar() {
+export default function Navbar({ onMenuClick }) {
   const { isConnected, alertStats } = useDataStore()
   const { user, logout } = useAuthStore()
   const location = useLocation()
@@ -68,15 +68,24 @@ export default function Navbar() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: '0 24px',
+      padding: '0 16px',
       flexShrink: 0,
-    }}>
-      {/* Left: page title */}
-      <div>
-        <h1 style={{ fontSize: 18, fontWeight: 700, fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }}>{title}</h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>
-          <Clock size={10} color="var(--text-secondary)" />
-          <p style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{now}</p>
+    }} className="md:px-6">
+      {/* Left: page title with hamburger on mobile */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <button
+          onClick={onMenuClick}
+          className="lg:hidden text-gray-400 hover:text-white"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center' }}
+        >
+          <Menu size={20} />
+        </button>
+        <div>
+          <h1 style={{ fontSize: 16, fontWeight: 700, fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)' }} className="md:text-lg">{title}</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>
+            <Clock size={10} color="var(--text-secondary)" />
+            <p style={{ fontSize: 10, color: 'var(--text-secondary)' }} className="md:text-xs">{now}</p>
+          </div>
         </div>
       </div>
 

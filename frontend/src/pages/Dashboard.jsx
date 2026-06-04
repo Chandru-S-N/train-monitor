@@ -48,7 +48,7 @@ export default function Dashboard() {
   return (
     <div className="animate-fade-in-up">
       {/* Stats Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard
           title="Active Trains"
           value={statsLoading ? '—' : (stats.active_trains ?? trains.filter(t => t.status === 'active').length)}
@@ -81,9 +81,9 @@ export default function Dashboard() {
         />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20, marginBottom: 20 }}>
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-5">
         {/* Live Sensor Feed */}
-        <div className="glass-card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div className="glass-card xl:col-span-2" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <Activity size={16} color="var(--teal)" />
@@ -140,7 +140,7 @@ export default function Dashboard() {
         </div>
 
         {/* Recent Alerts Panel */}
-        <div className="glass-card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div className="glass-card xl:col-span-1" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{ padding: '16px 18px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <Bell size={15} color="var(--red)" />

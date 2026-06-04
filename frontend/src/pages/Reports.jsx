@@ -63,7 +63,7 @@ export default function Reports() {
   }
 
   return (
-    <div className="animate-fade-in-up" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+    <div className="animate-fade-in-up grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Configuration Column */}
       <div className="glass-card" style={{ padding: '24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24, borderBottom: '1px solid var(--border)', paddingBottom: 16 }}>

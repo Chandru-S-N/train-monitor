@@ -109,23 +109,6 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Demo credentials */}
-          <div style={{
-            marginTop: 24, padding: '14px 16px',
-            background: 'rgba(13,148,136,0.04)',
-            border: '1px solid var(--border)',
-            borderRadius: 12,
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-              <Activity size={13} color="var(--teal)" />
-              <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--teal)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Demo Credentials</span>
-            </div>
-            <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.8 }}>
-              <div><span style={{ color: 'var(--text-secondary)' }}>Email:</span> <span style={{ color: 'var(--text-primary)', fontFamily: 'monospace' }}>admin@trainmonitor.com</span></div>
-              <div><span style={{ color: 'var(--text-secondary)' }}>Password:</span> <span style={{ color: 'var(--text-primary)', fontFamily: 'monospace' }}>Admin@123</span></div>
-            </div>
-          </div>
-
           <p style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: 'var(--text-secondary)' }}>
             Don't have an account?{' '}
             <Link to="/register" style={{ color: 'var(--teal)', textDecoration: 'none', fontWeight: 600 }}>Create Account</Link>

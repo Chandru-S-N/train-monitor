@@ -134,7 +134,7 @@ export default function TrainManagement() {
           No trains configured. Click "Add Train" to get started.
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {trainsList.map(train => {
             const live = liveData[train.id] || {}
             return (

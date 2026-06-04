@@ -193,7 +193,7 @@ export default function MaintenanceLogs() {
   return (
     <div className="animate-fade-in-up">
       {/* Header Widget Panel */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, marginBottom: 24 }}>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
         <div className="glass-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column' }}>
           <span style={{ fontSize: 10, color: '#6b7280', textTransform: 'uppercase', fontWeight: 600 }}>Total Logs</span>
           <span style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', marginTop: 8 }}>{stats.total}</span>

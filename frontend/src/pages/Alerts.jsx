@@ -338,7 +338,7 @@ export default function Alerts() {
   return (
     <div className="animate-fade-in-up">
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, marginBottom: 24 }}>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
         {STAT_CARDS.map(c => (
           <div key={c.label} className="glass-card" style={{ padding: '16px', borderLeft: `4px solid ${c.color}` }}>
             <p style={{ fontSize: 10, color: '#6b7280', textTransform: 'uppercase', fontWeight: 600 }}>{c.label} Alerts</p>
