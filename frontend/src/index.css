@@ -176,6 +176,13 @@ body::after {
 }
 .data-table tr:hover td { background: rgba(99,102,241,0.04); }
 
+@media (max-width: 640px) {
+  .data-table th { padding: 8px 10px; font-size: 9px; }
+  .data-table td { padding: 9px 10px; font-size: 11px; }
+  .glass-card { border-radius: 14px; }
+  .stat-card { padding: 16px !important; }
+}
+
 /* ─── Form input ─── */
 .form-input {
   background: rgba(99,102,241,0.02);

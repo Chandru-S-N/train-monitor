@@ -12,7 +12,7 @@ export default function StatCard({ title, value, subtitle, icon: Icon, color = '
         <div>
           <p style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>{title}</p>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-            <span style={{ fontSize: 28, fontWeight: 800, fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)', lineHeight: 1 }}>{value ?? '—'}</span>
+            <span className="text-[24px] sm:text-[28px]" style={{ fontWeight: 800, fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)', lineHeight: 1 }}>{value ?? '—'}</span>
             {unit && <span style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 500 }}>{unit}</span>}
           </div>
           {subtitle && <p style={{ fontSize: 11.5, color: 'var(--text-secondary)', marginTop: 6 }}>{subtitle}</p>}

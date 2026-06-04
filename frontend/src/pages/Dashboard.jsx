@@ -48,7 +48,7 @@ export default function Dashboard() {
   return (
     <div className="animate-fade-in-up">
       {/* Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
         <StatCard
           title="Active Trains"
           value={statsLoading ? '—' : (stats.active_trains ?? trains.filter(t => t.status === 'active').length)}
@@ -81,7 +81,7 @@ export default function Dashboard() {
         />
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-5">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-5 mb-4 sm:mb-5">
         {/* Live Sensor Feed */}
         <div className="glass-card xl:col-span-2" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
