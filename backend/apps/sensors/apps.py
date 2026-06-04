@@ -19,9 +19,9 @@ class SensorsConfig(AppConfig):
         if has_runserver and os.environ.get('RUN_MAIN') != 'true':
             return
 
-        # Start the background thread if Redis/Celery is not used and simulator is enabled
+        # Start the background thread if Redis/Celery is not used, or if IN_PROCESS_SIMULATOR is explicitly enabled
         from django.conf import settings
-        if settings.SIMULATOR_ENABLED and not settings.REDIS_HOST:
+        if settings.SIMULATOR_ENABLED and (not settings.REDIS_HOST or os.environ.get('IN_PROCESS_SIMULATOR') == 'true'):
             thread = threading.Thread(target=self.start_local_simulator, daemon=True)
             thread.start()
 
