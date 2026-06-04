@@ -102,6 +102,9 @@ else:
 
 REDIS_URL = config('REDIS_URL', default='')
 if REDIS_URL:
+    from urllib.parse import urlparse
+    url = urlparse(REDIS_URL)
+    REDIS_HOST = url.hostname or ''
     CHANNEL_LAYERS = {
         'default': {
             'BACKEND': 'channels_redis.core.RedisChannelLayer',
@@ -110,8 +113,13 @@ if REDIS_URL:
             },
         },
     }
-    CELERY_BROKER_URL = REDIS_URL
-    CELERY_RESULT_BACKEND = REDIS_URL
+    if REDIS_URL.startswith('rediss://') and 'ssl_cert_reqs' not in REDIS_URL:
+        separator = '&' if '?' in REDIS_URL else '?'
+        celery_redis_url = f"{REDIS_URL}{separator}ssl_cert_reqs=none"
+    else:
+        celery_redis_url = REDIS_URL
+    CELERY_BROKER_URL = celery_redis_url
+    CELERY_RESULT_BACKEND = celery_redis_url
 else:
     REDIS_HOST = config('REDIS_HOST', default='')
     if REDIS_HOST:
