@@ -1,0 +1,75 @@
+services:
+  # 1. Django Daphne Web Service (Daphne runs ASGI/WebSockets)
+  - type: web
+    name: train-monitor-backend
+    env: python
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
+    startCommand: "daphne -b 0.0.0.0 -p $PORT config.asgi:application"
+    rootDir: backend
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: DB_ENGINE
+        value: postgres
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+
+  # 2. Celery Background Worker
+  - type: worker
+    name: train-monitor-celery-worker
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "celery -A config worker --loglevel=info -P solo"
+    rootDir: backend
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: DB_ENGINE
+        value: postgres
+      - key: DATABASE_URL
+        fromService:
+          type: web
+          name: train-monitor-backend
+          envVarKey: DATABASE_URL
+      - key: REDIS_URL
+        fromService:
+          type: web
+          name: train-monitor-backend
+          envVarKey: REDIS_URL
+      - key: SECRET_KEY
+        fromService:
+          type: web
+          name: train-monitor-backend
+          envVarKey: SECRET_KEY
+
+  # 3. Celery Beat Scheduler
+  - type: worker
+    name: train-monitor-celery-beat
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "celery -A config beat --loglevel=info"
+    rootDir: backend
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: DB_ENGINE
+        value: postgres
+      - key: DATABASE_URL
+        fromService:
+          type: web
+          name: train-monitor-backend
+          envVarKey: DATABASE_URL
+      - key: REDIS_URL
+        fromService:
+          type: web
+          name: train-monitor-backend
+          envVarKey: REDIS_URL
+      - key: SECRET_KEY
+        fromService:
+          type: web
+          name: train-monitor-backend
+          envVarKey: SECRET_KEY
