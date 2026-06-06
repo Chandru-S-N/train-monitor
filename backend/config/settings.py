@@ -97,12 +97,6 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
-            'OPTIONS': {
-                # WAL mode dramatically improves concurrent read/write performance
-                'init_command': 'PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA cache_size=-32000; PRAGMA temp_store=MEMORY;',
-            },
-            # Reuse DB connections across requests (seconds)
-            'CONN_MAX_AGE': 60,
         }
     }
 
