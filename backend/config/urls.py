@@ -25,10 +25,15 @@ def setup_admin(request):
     from django.contrib.auth import get_user_model
     from django.http import HttpResponse
     User = get_user_model()
-    if not User.objects.filter(is_superuser=True).exists():
-        User.objects.create_superuser('admin', 'admin@trainmonitor.com', 'admin123')
-        return HttpResponse("Admin created successfully! Username: admin, Password: admin123. Please log in to /admin and change this password.")
-    return HttpResponse("Admin already exists.")
+    user, created = User.objects.get_or_create(
+        email='admin@trainmonitor.com',
+        defaults={'username': 'admin', 'is_staff': True, 'is_superuser': True}
+    )
+    user.set_password('Admin@123')
+    user.is_staff = True
+    user.is_superuser = True
+    user.save()
+    return HttpResponse("Admin setup/reset complete! Username: admin, Email: admin@trainmonitor.com, Password: Admin@123")
 
 urlpatterns = [
     path('', api_root, name='api_root'),
