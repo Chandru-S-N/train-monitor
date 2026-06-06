@@ -4,7 +4,7 @@ services:
     name: train-monitor-backend
     env: python
     buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
-    startCommand: "daphne -b 0.0.0.0 -p $PORT config.asgi:application"
+    startCommand: "python manage.py migrate --noinput && python manage.py seed_demo_data && daphne -b 0.0.0.0 -p $PORT config.asgi:application"
     rootDir: backend
     envVars:
       - key: DEBUG
