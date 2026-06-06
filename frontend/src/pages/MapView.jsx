@@ -123,10 +123,10 @@ export default function MapView() {
   }
 
   return (
-    <div className="animate-fade-in-up" style={{ height: 'calc(100vh - 120px)', display: 'flex', gap: 16 }}>
+    <div className="animate-fade-in-up map-layout">
 
       {/* ── LEFT: Train List Panel ── */}
-      <div className="glass-card" style={{ width: 260, flexShrink: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div className="glass-card map-sidebar">
 
         {/* Panel Header */}
         <div style={{ padding: '16px 18px 12px', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
@@ -216,7 +216,7 @@ export default function MapView() {
       </div>
 
       {/* ── RIGHT: Map Container ── */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div className="map-main">
 
         {/* Map header bar */}
         <div className="glass-card" style={{ padding: '11px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>

@@ -26,13 +26,13 @@ export default function Dashboard() {
   const { data: statsData, isLoading: statsLoading } = useQuery({
     queryKey: ['sensorStats'],
     queryFn: getSensorStats,
-    refetchInterval: 30000,
+    refetchInterval: 60_000, // was 30s — stats are rolling averages, 60s is fine
   })
 
   const { data: alertsData } = useQuery({
     queryKey: ['recentAlerts'],
     queryFn: () => getAlerts({ limit: 8, ordering: '-created_at' }),
-    refetchInterval: 15000,
+    refetchInterval: 30_000, // was 15s — WebSocket handles real-time, this is just a fallback
   })
 
   const { data: trainsData } = useQuery({

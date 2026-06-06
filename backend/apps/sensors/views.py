@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Avg, Count, Max, Min
+from django.db.models import Avg, Count, Max, Min, OuterRef, Subquery
 from django.utils import timezone
 from datetime import timedelta
 import django_filters
@@ -30,13 +30,24 @@ class SensorDataListView(generics.ListCreateAPIView):
 
 
 class SensorLatestView(APIView):
+    """
+    Return the single most-recent SensorData row per active train
+    using a single subquery instead of N separate DB hits.
+    """
     def get(self, request):
-        result = []
-        for train in Train.objects.filter(status='active'):
-            latest = SensorData.objects.filter(train=train).order_by('-timestamp').first()
-            if latest:
-                result.append(SensorDataSerializer(latest).data)
-        return Response(result)
+        # One subquery: latest timestamp per train
+        latest_ids = (
+            SensorData.objects
+            .filter(train=OuterRef('train'))
+            .order_by('-timestamp')
+            .values('id')[:1]
+        )
+        qs = (
+            SensorData.objects
+            .select_related('train')
+            .filter(train__status='active', id=Subquery(latest_ids))
+        )
+        return Response(SensorDataSerializer(qs, many=True).data)
 
 
 class SensorStatsView(APIView):
@@ -45,10 +56,8 @@ class SensorStatsView(APIView):
         last_hour = now - timedelta(hours=1)
         last_24h = now - timedelta(hours=24)
 
-        qs_hour = SensorData.objects.filter(timestamp__gte=last_hour)
-        qs_24h = SensorData.objects.filter(timestamp__gte=last_24h)
-
-        stats = qs_hour.aggregate(
+        # Single aggregation query for all sensor averages
+        stats = SensorData.objects.filter(timestamp__gte=last_hour).aggregate(
             avg_temperature=Avg('temperature'),
             avg_pressure=Avg('pressure'),
             avg_humidity=Avg('humidity'),
@@ -56,9 +65,20 @@ class SensorStatsView(APIView):
             total_readings=Count('id'),
         )
 
+        total_readings_24h = SensorData.objects.filter(timestamp__gte=last_24h).count()
+
         from apps.alerts.models import Alert
-        active_alerts = Alert.objects.filter(is_resolved=False).count()
-        critical_alerts = Alert.objects.filter(is_resolved=False, severity='critical').count()
+        # Single aggregation for alert counts instead of 2 separate queries
+        from django.db.models import Q, Sum, Case, When, IntegerField
+        alert_agg = Alert.objects.filter(is_resolved=False).aggregate(
+            total_active=Count('id'),
+            critical=Count(Case(When(severity='critical', then=1), output_field=IntegerField())),
+        )
+
+        train_counts = Train.objects.aggregate(
+            active=Count(Case(When(status='active', then=1), output_field=IntegerField())),
+            total=Count('id'),
+        )
 
         return Response({
             'avg_temperature': round(stats['avg_temperature'] or 0, 1),
@@ -66,11 +86,11 @@ class SensorStatsView(APIView):
             'avg_humidity': round(stats['avg_humidity'] or 0, 1),
             'avg_vibration': round(stats['avg_vibration'] or 0, 2),
             'total_readings': stats['total_readings'] or 0,
-            'total_readings_24h': qs_24h.count(),
-            'active_trains': Train.objects.filter(status='active').count(),
-            'total_trains': Train.objects.count(),
-            'active_alerts': active_alerts,
-            'critical_alerts': critical_alerts,
+            'total_readings_24h': total_readings_24h,
+            'active_trains': train_counts['active'] or 0,
+            'total_trains': train_counts['total'] or 0,
+            'active_alerts': alert_agg['total_active'] or 0,
+            'critical_alerts': alert_agg['critical'] or 0,
         })
 
 
@@ -102,7 +122,6 @@ class SensorChartDataView(APIView):
                     to_dt = make_aware(to_dt)
                 qs = SensorData.objects.filter(timestamp__gte=from_dt, timestamp__lte=to_dt)
             except Exception:
-                # Fallback to 1 hour
                 qs = SensorData.objects.filter(timestamp__gte=timezone.now() - timedelta(hours=1))
         else:
             hours = int(request.query_params.get('hours', 1))
@@ -111,10 +130,12 @@ class SensorChartDataView(APIView):
 
         if train_id:
             qs = qs.filter(train__id=train_id)
-        qs = qs.order_by('timestamp')
+
+        # Only fetch the two columns we need — much faster than full model
+        qs = qs.order_by('timestamp').values('timestamp', sensor, 'train_id')
 
         data = [
-            {'timestamp': row.timestamp.isoformat(), 'value': getattr(row, sensor), 'train_id': row.train_id}
+            {'timestamp': row['timestamp'].isoformat(), 'value': row[sensor], 'train_id': row['train_id']}
             for row in qs[:500]
         ]
         return Response(data)
@@ -128,19 +149,44 @@ class GPSHistoryView(APIView):
 
 
 class GPSLatestView(APIView):
+    """
+    Return the most recent GPS fix per train using a single subquery.
+    Avoids N individual queries (one per train).
+    """
     def get(self, request):
+        # Subquery: latest GPS row id per train
+        latest_gps_ids = (
+            GPSHistory.objects
+            .filter(train=OuterRef('pk'))
+            .order_by('-timestamp')
+            .values('id')[:1]
+        )
+        trains = Train.objects.annotate(
+            latest_gps_id=Subquery(latest_gps_ids)
+        ).filter(latest_gps_id__isnull=False).values(
+            'id', 'name', 'route_name', 'status', 'latest_gps_id'
+        )
+
+        gps_map = {
+            g.train_id: g
+            for g in GPSHistory.objects.filter(
+                id__in=[t['latest_gps_id'] for t in trains]
+            )
+        }
+
         result = []
-        for train in Train.objects.all():
-            latest = GPSHistory.objects.filter(train=train).first()
-            if latest:
+        for train in trains:
+            gps = gps_map.get(train['id'])
+            if gps:
                 result.append({
-                    'train_id': train.id,
-                    'train_name': train.name,
-                    'route_name': train.route_name,
-                    'status': train.status,
-                    'latitude': latest.latitude,
-                    'longitude': latest.longitude,
-                    'speed': latest.speed,
-                    'timestamp': latest.timestamp.isoformat(),
+                    'train_id': train['id'],
+                    'train_name': train['name'],
+                    'route_name': train['route_name'],
+                    'status': train['status'],
+                    'latitude': gps.latitude,
+                    'longitude': gps.longitude,
+                    'speed': gps.speed,
+                    'timestamp': gps.timestamp.isoformat(),
                 })
+
         return Response(result)

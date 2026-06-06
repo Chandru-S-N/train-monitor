@@ -12,18 +12,21 @@ export function useSensorWebSocket() {
   const reconnectTimer = useRef(null)
   const pollTimer = useRef(null)
   const wsConnected = useRef(false)
+  const isMounted = useRef(true)
 
   const { token } = useAuthStore()
   const { updateLiveData, setConnected } = useDataStore()
 
   // REST polling fallback: called when WS is not connected
+  // Slowed to 8s (was 4s) — sensor data updates every 3s via Celery anyway
   const pollREST = useCallback(async () => {
-    if (wsConnected.current || !token) return
+    if (wsConnected.current || !token || !isMounted.current) return
     try {
       const res = await fetch(`${API_URL}/sensors/latest/`, {
         headers: { Authorization: `Bearer ${token}` },
+        signal: AbortSignal.timeout(8000),
       })
-      if (res.ok) {
+      if (res.ok && isMounted.current) {
         const data = await res.json()
         const list = Array.isArray(data) ? data : (data.results || [])
         list.forEach(item => updateLiveData(item))
@@ -36,7 +39,7 @@ export function useSensorWebSocket() {
   const startPolling = useCallback(() => {
     clearInterval(pollTimer.current)
     pollREST() // immediate first call
-    pollTimer.current = setInterval(pollREST, 4000)
+    pollTimer.current = setInterval(pollREST, 8000) // was 4000
   }, [pollREST])
 
   const stopPolling = useCallback(() => {
@@ -44,17 +47,22 @@ export function useSensorWebSocket() {
   }, [])
 
   const connect = useCallback(() => {
-    if (!token) return
+    if (!token || !isMounted.current) return
+    // Don't open duplicate connections
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) return
+
     try {
       ws.current = new WebSocket(`${WS_URL}/ws/sensors/`)
 
       ws.current.onopen = () => {
+        if (!isMounted.current) return
         wsConnected.current = true
         setConnected(true)
         stopPolling() // WS works — stop polling
       }
 
       ws.current.onmessage = (e) => {
+        if (!isMounted.current) return
         try {
           const msg = JSON.parse(e.data)
           if (msg.type === 'sensor_update') {
@@ -65,9 +73,10 @@ export function useSensorWebSocket() {
 
       ws.current.onclose = () => {
         wsConnected.current = false
+        if (!isMounted.current) return
         setConnected(false)
         startPolling() // WS closed — fall back to REST polling
-        reconnectTimer.current = setTimeout(connect, 5000)
+        reconnectTimer.current = setTimeout(connect, 8000) // was 5000
       }
 
       ws.current.onerror = () => {
@@ -76,16 +85,19 @@ export function useSensorWebSocket() {
     } catch {
       wsConnected.current = false
       startPolling() // WS failed — fall back immediately
-      reconnectTimer.current = setTimeout(connect, 8000)
+      reconnectTimer.current = setTimeout(connect, 12000)
     }
   }, [token, updateLiveData, setConnected, startPolling, stopPolling])
 
   useEffect(() => {
+    isMounted.current = true
     connect()
     return () => {
+      isMounted.current = false
       clearTimeout(reconnectTimer.current)
       clearInterval(pollTimer.current)
       ws.current?.close()
+      wsConnected.current = false
     }
   }, [connect])
 }
@@ -94,15 +106,19 @@ export function useSensorWebSocket() {
 export function useAlertWebSocket() {
   const ws = useRef(null)
   const reconnectTimer = useRef(null)
+  const isMounted = useRef(true)
   const { token } = useAuthStore()
   const { addAlert } = useDataStore()
 
   const connect = useCallback(() => {
-    if (!token) return
+    if (!token || !isMounted.current) return
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) return
+
     try {
       ws.current = new WebSocket(`${WS_URL}/ws/alerts/`)
 
       ws.current.onmessage = (e) => {
+        if (!isMounted.current) return
         try {
           const msg = JSON.parse(e.data)
           if (msg.type === 'new_alert') {
@@ -132,20 +148,23 @@ export function useAlertWebSocket() {
       }
 
       ws.current.onclose = () => {
-        reconnectTimer.current = setTimeout(connect, 5000)
+        if (!isMounted.current) return
+        reconnectTimer.current = setTimeout(connect, 8000)
       }
 
       ws.current.onerror = () => {
         ws.current?.close()
       }
     } catch {
-      reconnectTimer.current = setTimeout(connect, 8000)
+      reconnectTimer.current = setTimeout(connect, 12000)
     }
   }, [token, addAlert])
 
   useEffect(() => {
+    isMounted.current = true
     connect()
     return () => {
+      isMounted.current = false
       clearTimeout(reconnectTimer.current)
       ws.current?.close()
     }

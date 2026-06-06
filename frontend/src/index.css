@@ -35,6 +35,17 @@ body {
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  /* Prevent text size inflation on mobile */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Better tap targets on touch devices */
+@media (pointer: coarse) {
+  button, a, [role="button"] {
+    min-height: 40px;
+    min-width: 40px;
+  }
 }
 
 /* Animated background grid + mesh colors */
@@ -176,11 +187,36 @@ body::after {
 }
 .data-table tr:hover td { background: rgba(99,102,241,0.04); }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  /* Table: allow horizontal scrolling without breaking layout */
+  .data-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 14px;
+  }
   .data-table th { padding: 8px 10px; font-size: 9px; }
   .data-table td { padding: 9px 10px; font-size: 11px; }
-  .glass-card { border-radius: 14px; }
-  .stat-card { padding: 16px !important; }
+  .glass-card { border-radius: 12px; }
+  .stat-card { padding: 14px !important; }
+
+  /* Stack any flex rows on mobile */
+  .mobile-stack {
+    flex-direction: column !important;
+  }
+
+  /* Full-width buttons on mobile */
+  .mobile-full {
+    width: 100% !important;
+  }
+
+  /* Tighter font sizes on mobile */
+  h1 { font-size: 1.2rem !important; }
+}
+
+@media (max-width: 480px) {
+  .data-table th { padding: 6px 8px; font-size: 8.5px; }
+  .data-table td { padding: 8px 8px; font-size: 10.5px; }
+  .glass-card { border-radius: 10px; }
 }
 
 /* ─── Form input ─── */
@@ -322,4 +358,103 @@ option { background: var(--bg-secondary); color: var(--text-primary); }
   border-bottom: 1px solid rgba(99,102,241,0.12) !important;
   color: var(--indigo) !important;
   font-weight: 600;
+}
+
+/* ─── Map Layout Responsiveness ─── */
+.map-layout {
+  display: flex;
+  gap: 16px;
+  height: calc(100vh - 120px);
+}
+
+.map-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.map-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .map-layout {
+    flex-direction: column !important;
+    height: auto !important;
+    gap: 12px;
+  }
+  .map-sidebar {
+    width: 100% !important;
+    height: 240px !important;
+    flex-shrink: 0;
+  }
+  .map-main {
+    height: 450px !important;
+    flex: none !important;
+  }
+}
+
+/* ─── Alert Card Responsiveness ─── */
+.alert-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+
+.alert-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  .alert-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+  .alert-card-actions {
+    width: 100% !important;
+    justify-content: flex-end;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    margin-top: 4px;
+  }
+}
+
+/* ─── Maintenance Card Responsiveness ─── */
+.maint-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.maint-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: 16px;
+}
+
+@media (max-width: 640px) {
+  .maint-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+  }
+  .maint-card-actions {
+    margin-left: 0 !important;
+    justify-content: flex-end;
+    width: 100% !important;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    margin-top: 6px;
+  }
 }

@@ -292,12 +292,9 @@ export default function MaintenanceLogs() {
             return (
               <div
                 key={log.id}
-                className="glass-card"
+                className="glass-card maint-card"
                 style={{
                   padding: '20px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'flex-start',
                   borderLeft: `3px solid ${pStyle.color}`,
                   transition: 'transform 0.15s ease'
                 }}
@@ -396,7 +393,7 @@ export default function MaintenanceLogs() {
                 </div>
 
                 {/* Actions column */}
-                <div style={{ display: 'flex', gap: 8, marginLeft: 16 }}>
+                <div className="maint-card-actions">
                   {canModify && (
                     <button
                       onClick={() => handleOpenEdit(log)}
@@ -433,7 +430,7 @@ export default function MaintenanceLogs() {
           background: 'rgba(6,7,20,0.85)', backdropFilter: 'blur(10px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
         }}>
-          <form onSubmit={handleSubmit} className="glass-card" style={{ width: '100%', maxWidth: 500, padding: 24, display: 'flex', flexDirection: 'column', gap: 16, maxHeight: '90vh', overflowY: 'auto' }}>
+          <form onSubmit={handleSubmit} className="glass-card" style={{ width: 'calc(100% - 32px)', maxWidth: 500, padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16, maxHeight: '90dvh', overflowY: 'auto' }}>
             <h3 style={{ fontSize: 16, fontWeight: 700, fontFamily: 'Outfit, sans-serif', borderBottom: '1px solid var(--border)', paddingBottom: 12 }}>
               {selectedLog ? 'Update Maintenance Action' : 'Log Maintenance/Issue'}
             </h3>

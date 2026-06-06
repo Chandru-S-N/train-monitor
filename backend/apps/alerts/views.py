@@ -2,6 +2,7 @@ from rest_framework import generics, status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.utils import timezone
+from django.db.models import Count
 import django_filters
 from .models import Alert
 from .serializers import AlertSerializer
@@ -33,16 +34,17 @@ class AlertStatsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        qs = Alert.objects.all()
-        unresolved = qs.filter(is_resolved=False)
-        return Response({
-            'total': qs.count(),
-            'unresolved': unresolved.count(),
-            'critical': unresolved.filter(severity='critical').count(),
-            'high': unresolved.filter(severity='high').count(),
-            'medium': unresolved.filter(severity='medium').count(),
-            'low': unresolved.filter(severity='low').count(),
-        })
+        from django.db.models import Case, When, IntegerField
+        # Single DB round-trip instead of 6 separate .count() calls
+        agg = Alert.objects.aggregate(
+            total=Count('id'),
+            unresolved=Count(Case(When(is_resolved=False, then=1), output_field=IntegerField())),
+            critical=Count(Case(When(is_resolved=False, severity='critical', then=1), output_field=IntegerField())),
+            high=Count(Case(When(is_resolved=False, severity='high', then=1), output_field=IntegerField())),
+            medium=Count(Case(When(is_resolved=False, severity='medium', then=1), output_field=IntegerField())),
+            low=Count(Case(When(is_resolved=False, severity='low', then=1), output_field=IntegerField())),
+        )
+        return Response(agg)
 
 
 class AlertAcknowledgeView(APIView):

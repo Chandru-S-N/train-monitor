@@ -10,7 +10,7 @@ export const useDataStore = create((set, get) => ({
 
   updateLiveData: (sensorData) => set(state => {
     const updated = { ...state.liveData, [sensorData.train_id]: sensorData }
-    const readings = [sensorData, ...state.allLiveReadings].slice(0, 50)
+    const readings = [sensorData, ...state.allLiveReadings].slice(0, 30) // was 50, reduced for perf
     return { liveData: updated, allLiveReadings: readings }
   }),
 

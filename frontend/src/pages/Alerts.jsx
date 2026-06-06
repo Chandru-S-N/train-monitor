@@ -438,11 +438,11 @@ export default function Alerts() {
               return (
                 <div
                   key={alert.id}
+                  className="alert-card"
                   style={{
                     padding: '14px 16px', borderRadius: 12,
                     border: isSelected ? `1px solid rgba(20,230,180,0.35)` : '1px solid rgba(99,102,241,0.04)',
                     background: isSelected ? 'var(--border)' : alert.is_resolved ? 'rgba(255,255,255,0.01)' : 'rgba(255,255,255,0.02)',
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 14,
                     transition: 'all 0.15s',
                     borderLeft: `3px solid ${sc}`,
                   }}
@@ -482,7 +482,7 @@ export default function Alerts() {
                   </div>
 
                   {/* Right: Action Button */}
-                  <div style={{ display: 'flex', gap: 8, flexShrink: 0, alignItems: 'center' }}>
+                  <div className="alert-card-actions">
                     {/* Detail Info */}
                     <button
                       onClick={() => setDetailAlert(alert)}
@@ -521,7 +521,7 @@ export default function Alerts() {
         <>
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100 }} onClick={() => setDetailAlert(null)} />
           <div style={{
-            position: 'fixed', right: 0, top: 0, bottom: 0, width: 360, zIndex: 101,
+            position: 'fixed', right: 0, top: 0, bottom: 0, width: '100%', maxWidth: 360, zIndex: 101,
             background: 'var(--bg-secondary)', borderLeft: '1px solid var(--border)',
             padding: '28px 24px', display: 'flex', flexDirection: 'column', gap: 16,
             boxShadow: '-8px 0 32px rgba(99,102,241,0.08)',

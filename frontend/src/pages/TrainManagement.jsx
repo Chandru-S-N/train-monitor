@@ -138,7 +138,7 @@ export default function TrainManagement() {
           {trainsList.map(train => {
             const live = liveData[train.id] || {}
             return (
-              <div key={train.id} className="glass-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', justifyBetween: 'space-between', height: '100%' }}>
+              <div key={train.id} className="glass-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
                     <div>
@@ -235,7 +235,7 @@ export default function TrainManagement() {
           background: 'rgba(6,7,20,0.85)', backdropFilter: 'blur(10px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
         }}>
-          <form onSubmit={handleSubmit} className="glass-card" style={{ width: '100%', maxWidth: 460, padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <form onSubmit={handleSubmit} className="glass-card" style={{ width: 'calc(100% - 32px)', maxWidth: 460, padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16, maxHeight: '90dvh', overflowY: 'auto' }}>
             <h3 style={{ fontSize: 16, fontWeight: 700, fontFamily: 'Outfit, sans-serif', borderBottom: '1px solid var(--border)', paddingBottom: 12 }}>
               {selectedTrain ? 'Modify Train Parameters' : 'Add New Train to Fleet'}
             </h3>

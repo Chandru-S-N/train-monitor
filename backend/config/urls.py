@@ -4,6 +4,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
 
+
+def handler404(request, exception=None):
+    return JsonResponse({'error': 'Not found', 'status': 404}, status=404)
+
+
+def handler500(request):
+    return JsonResponse({'error': 'Internal server error', 'status': 500}, status=500)
+
 def api_root(request):
     return JsonResponse({
         "name": "Smart Train Monitoring System API Gateway",

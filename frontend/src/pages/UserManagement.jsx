@@ -109,7 +109,7 @@ export default function UserManagement() {
   return (
     <div className="animate-fade-in-up">
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }} className="mobile-stack gap-3">
         <div>
           <span style={{ fontSize: 11, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>User Settings</span>
           <h2 style={{ fontSize: 18, fontWeight: 700, fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)', marginTop: 2 }}>Access Management</h2>
@@ -227,7 +227,7 @@ export default function UserManagement() {
           background: 'rgba(6,7,20,0.85)', backdropFilter: 'blur(10px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
         }}>
-          <form onSubmit={handleSubmit} className="glass-card" style={{ width: '100%', maxWidth: 440, padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <form onSubmit={handleSubmit} className="glass-card" style={{ width: 'calc(100% - 32px)', maxWidth: 440, padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16, maxHeight: '90dvh', overflowY: 'auto' }}>
             <h3 style={{ fontSize: 16, fontWeight: 700, fontFamily: 'Outfit, sans-serif', borderBottom: '1px solid var(--border)', paddingBottom: 12 }}>
               {selectedUser ? 'Edit User Roles' : 'Create Operator Account'}
             </h3>

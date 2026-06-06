@@ -40,6 +40,8 @@ export default function App() {
           <Route path="maintenance" element={<MaintenanceLogs />} />
           <Route path="users" element={<AdminRoute><UserManagement /></AdminRoute>} />
         </Route>
+        {/* Catch-all: redirect unknown routes to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )

@@ -97,6 +97,12 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
+            'OPTIONS': {
+                # WAL mode dramatically improves concurrent read/write performance
+                'init_command': 'PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA cache_size=-32000; PRAGMA temp_store=MEMORY;',
+            },
+            # Reuse DB connections across requests (seconds)
+            'CONN_MAX_AGE': 60,
         }
     }
 
@@ -185,6 +191,8 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 50,
+    # Return 404 JSON instead of HTML for API 404s
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
 }
 
 CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL', default=True, cast=bool)
