@@ -64,7 +64,7 @@ TEMPLATES = [
 ]
 
 DATABASE_URL = config('DATABASE_URL', default='')
-if DATABASE_URL:
+if DATABASE_URL and config('DB_ENGINE', default='') != 'sqlite':
     from urllib.parse import urlparse
     url = urlparse(DATABASE_URL)
     DATABASES = {
