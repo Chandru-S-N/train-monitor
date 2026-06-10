@@ -7,7 +7,7 @@ from apps.users.permissions import IsAdminOrOperator, IsAdminRole
 
 class TrainListCreateView(generics.ListCreateAPIView):
     serializer_class = TrainSerializer
-    queryset = Train.objects.select_related('route').all()
+    queryset = Train.objects.all()
 
     def get_permissions(self):
         if self.request.method == 'POST':
@@ -16,7 +16,7 @@ class TrainListCreateView(generics.ListCreateAPIView):
 
 class TrainDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TrainSerializer
-    queryset = Train.objects.select_related('route').all()
+    queryset = Train.objects.all()
     lookup_field = 'id'
 
     def get_permissions(self):
