@@ -10,7 +10,7 @@ services:
       - key: DEBUG
         value: "False"
       - key: DB_ENGINE
-        value: sqlite
+        value: postgres
       - key: DATABASE_URL
         sync: false
       - key: REDIS_URL
